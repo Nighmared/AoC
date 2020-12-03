@@ -161,6 +161,14 @@ class Computer:
 			out+= "input"
 		elif opcode%100 == 4:
 			out+= "==================output"
+		elif opcode%100 == 5:
+			out += "TODO NEWOP"
+		elif opcode%100 == 6:
+			out += "TODO NEWOP"
+		elif opcode%100 == 7:
+			out += "TODO NEWOP"
+		elif opcode%100 == 8:
+			out += "TODO NEWOP"
 		elif opcode%100 == 99:
 			out+= "!HALT!"
 		else:
