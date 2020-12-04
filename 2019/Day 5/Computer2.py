@@ -1,7 +1,8 @@
 
 class Computer:
 	IMM_OP = (3,4)
-	ARG_OP = (1,2)
+	ARG_OP = (1,2,7,8)
+	JMP_OP = (5,6)
 	DEBUG = False
 	instr_log = []
 	inval = -1
@@ -10,8 +11,10 @@ class Computer:
 		self.memory = {}
 		self._readInput()
 		self.printcount = 0
+		self.instr_pointer = 0
 
 	def reset(self):
+		self.instr_pointer = 0
 		self.printcount = 0
 		self.instr_log.clear()
 		self.memory = self.__reset_memory.copy()
@@ -29,8 +32,8 @@ class Computer:
 		self.memory[index] = value
 
 	def work(self):
-		instr_pointer = 0
-		instr = self.memory[instr_pointer]
+		self.instr_pointer = 0
+		instr = self.memory[self.instr_pointer]
 		op_code = instr%100
 		print("******************************")
 		while(op_code != 99):
@@ -40,107 +43,102 @@ class Computer:
 
 
 			if(op_code in self.IMM_OP):
-				if(self.DEBUG): print("at pos:",instr_pointer," =>  " ,instr,self.memory[instr_pointer+1])
-				self.instr_log.append((instr_pointer,instr,self.memory[instr_pointer+1]))
-				a = self.memory[instr_pointer+1]
-				self._do_op_imm(op_code,mode_first,a)
-				instr_pointer+=2
-				#print("did imm op, increased instr pointer to ",instr_pointer)
-			elif(op_code in self.ARG_OP):
-				if(self.DEBUG): print("at pos:",instr_pointer," =>  " ,instr,self.memory[instr_pointer+1],self.memory[instr_pointer+2],self.memory[instr_pointer+3])
-				a = self.memory[instr_pointer+1]
-				b = self.memory[instr_pointer+2]
-				c = self.memory[instr_pointer+3]
-				memvala,memvalb = 0,0
+				self.instr_log.append((self.instr_pointer,instr,self.memory[self.instr_pointer+1]))
+				a = self.memory[self.instr_pointer+1]
+				if(mode_first == 0 and op_code != 3):
+					a = self.memory[a]
+				self._do_op_imm(op_code,a)
+				self.instr_pointer+=2
+			elif(op_code in self.JMP_OP):
+				a = self.memory[self.instr_pointer+1]
+				b = self.memory[self.instr_pointer+2]
 				if(mode_first == 0):
-					memvala = self.memory[a]
+					a = self.memory[a]
 				if(mode_second == 0):
-					memvalb = self.memory[b]
-				self.instr_log.append((instr_pointer,instr,self.memory[instr_pointer+1],self.memory[instr_pointer+2],self.memory[instr_pointer+3],memvala,memvalb))
+					b = self.memory[b]
+				self._do_op_jmp(op_code,a,b)
+
+
+			elif(op_code in self.ARG_OP):
+				a = self.memory[self.instr_pointer+1]
+				b = self.memory[self.instr_pointer+2]
+				c = self.memory[self.instr_pointer+3]
+				if(mode_first == 0):
+					a = self.memory[a]
+				if(mode_second == 0):
+					b = self.memory[b]
+
+				self.instr_log.append((self.instr_pointer,instr,self.memory[self.instr_pointer+1],self.memory[self.instr_pointer+2],c,a,b))
 
 				self._do_op_arg(
 					op_code,
-					a,mode_first,
-					b,mode_second,
-					c,mode_third)
-				instr_pointer+=4
+					a,
+					b,
+					c)
+				self.instr_pointer+=4
 			else:
 				print("===================\n oh no we got an error")
 				print("heres some info")
-				print(instr_pointer)
-				for a in (-3,-2,-1,0,1,2,3):
-					print(self.memory[instr_pointer+a],end=" ")
+				print(self.instr_pointer)
 				print("\n")
 				print(f"unknown opcode >{op_code}< found! ")
 				return #dont raise error cuz output gets uselessly messy
 
-			instr = self.memory[instr_pointer] # fetch next instr
+			instr = self.memory[self.instr_pointer] # fetch next instr
 			op_code = instr%100 # get opcode
 		print("******************************\n")
+
+	def _do_op_jmp(self,op_code,first_arg,sec_arg):
+		if(op_code == 5):
+			if(first_arg != 0):
+				self.instr_pointer = sec_arg
+			else:
+				self.instr_pointer+=3
+		elif(op_code == 6):
+			if(first_arg == 0):
+				self.instr_pointer = sec_arg
+			else:
+				self.instr_pointer+=3
+		else:
+			raise ValueError("thats a nope from me...")
+
 
 	def _do_op_arg(
 		self,
 		op_code:int,
-		first_arg:int, mode_first_arg:int,
-		sec_arg:int, mode_sec_arg:int,
-		third_arg:int, mode_third_arg:int):
-		#FIRST: GET ALL VALUES
-		val1 = val2 = res_indx = 0
-
-		if(mode_first_arg == 1):
-			val1 = first_arg
-		else:
-			val1 = self.memory[first_arg]
-
-		if(mode_sec_arg == 1):
-			val2 = sec_arg
-		else:
-			val2 = self.memory[sec_arg]
-
-		#if(mode_third_arg == 1):
-		#	res_indx = third_arg
-		#else:
-		#	res_indx = self.memory[third_arg]
-		res_indx = third_arg
-
+		first_arg:int,
+		sec_arg:int,
+		res_address:int):
 		if(op_code == 1):
-			self.memory[res_indx] = val1 + val2
-			if(self.DEBUG):print(f"stored {val1}+{val2} = {val1+val2} at self.memory[{res_indx}] ")
+			self.memory[res_address] = first_arg + sec_arg
+			if(self.DEBUG):print(f"stored {first_arg}+{sec_arg} = {first_arg+sec_arg} at self.memory[{res_address}] ")
 		elif(op_code == 2):
-			self.memory[res_indx] = val1 * val2
-			if(self.DEBUG): print(f"stored  {val1}*{val2} = {val1*val2} at self.memory[{res_indx}] ")
+			self.memory[res_address] = first_arg * sec_arg
+			if(self.DEBUG): print(f"stored  {first_arg}*{sec_arg} = {first_arg*sec_arg} at self.memory[{res_address}] ")
+		elif(op_code == 7):
+			self.memory[res_address] = int(first_arg<sec_arg)
+		elif(op_code == 8):
+			self.memory[res_address] = int(first_arg == sec_arg)
 		else:
 			raise ValueError("wtf this shouldnt be possible lol")
 	
-	def _do_op_imm(
-		self,
-		op_code:int,
-		mode:int,
-		arg:int
-		):
-		address = 0
-		if(mode == 1 or op_code == 3):
-			defin_arg = arg
-		else:
-			defin_arg = self.memory[arg]
-		
-		if(op_code == 3):
+	def _do_op_imm(self, op_code:int, arg:int):
+		if(op_code == 3): #read input 
 			if(self.inval == -1):
 				val = int(input("give input: "))
-				self.memory[defin_arg] = val
+				self.memory[arg] = val
 			else:
 				print(f"give input: {self.inval}")
-				self.memory[defin_arg] = self.inval
+				self.memory[arg] = self.inval
 			print()
-		elif(op_code == 4):
+		elif(op_code == 4): #print
 			self.printcount+= 1
 			end = "\n"
-			if defin_arg == 0: end = "\r"
-			print(f"[IntComp] {str(self.printcount).ljust(3)}>\t{defin_arg}",end = end)
-			if defin_arg!=0 and abs(defin_arg)<10000:
-				for i in range(10,0,-1):
+			if arg == 0: end = "\r"
+			print(f"[IntComp] {str(self.printcount).ljust(3)}>\t{arg}",end = end)
+			if arg!=0 and abs(arg)<10000:
+				for i in range(min(10,len(self.instr_log)),0,-1):
 					print(self.__parse_log_entry(self.instr_log[-i]))
-
 		else:
 			raise ValueError("neither should this be possible lol")
 
