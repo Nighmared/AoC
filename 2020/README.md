@@ -20,8 +20,8 @@ There are 24 Folders (named `Day 1` to `Day 24`) each of which contains 3 files 
 4.  Python
 5.  Java
 6. Java
-7. 
-8. 
+7. Java
+8. Python
 9. 
 10. 
 11. 
