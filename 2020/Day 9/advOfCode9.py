@@ -1,6 +1,6 @@
 preAmLen = 25
 
-lines = open("input.txt").readlines()
+lines = open("advOfcode9.txt").readlines()
 vals = []
 for i in range(0,preAmLen):
 	vals.append(int(lines[i]))
