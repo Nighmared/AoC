@@ -7,6 +7,11 @@ import (
 	"strings"
 )
 
+const (
+	sol   = "\033[31;47m"
+	reset = "\033[0;0m"
+)
+
 type direction int8
 
 const (
@@ -68,8 +73,28 @@ func main() {
 			yres -= s.n
 		}
 	}
-	fmt.Println("Depth: ", yres, " Horizontal distance: ", xres, "Product: ", xres*yres)
+	fmt.Println("Part 1:")
+	fmt.Println("Depth: ", yres, " Horizontal distance: ", xres, sol, "Product: ", xres*yres, reset)
 
 	// Part 2
+	fmt.Println("===========================================================================")
+
+	xres = 0
+	yres = 0
+	aim := 0
+
+	for _, s := range steps {
+		switch s.d {
+		case forward:
+			xres += s.n
+			yres += aim * s.n
+		case down:
+			aim += s.n
+		case up:
+			aim -= s.n
+		}
+	}
+	fmt.Println("Part 2:")
+	fmt.Println("Depth: ", yres, " Horizontal distance: ", xres, sol, "Product: ", xres*yres, reset)
 
 }
