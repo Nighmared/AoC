@@ -1,6 +1,7 @@
-from collections import defaultdict
 import os
+from collections import defaultdict
 from typing import Optional
+
 import pydantic
 
 

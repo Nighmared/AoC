@@ -1,5 +1,5 @@
-from itertools import cycle
 import os
+from itertools import cycle
 from time import sleep
 
 
