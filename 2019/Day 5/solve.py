@@ -10,4 +10,3 @@ print("part2 solution: ")
 solver.reset()
 solver.inval = 5
 solver.work()
-
