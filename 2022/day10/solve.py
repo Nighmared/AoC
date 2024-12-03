@@ -21,13 +21,14 @@ class Processor:
         EMTPY_CHAR = " "  # is "." in the original task
         FULL_CHAR = "█"  # is "#" in the original
         if abs(self.x - self.crt_pos) < 2:
-            print(FULL_CHAR, end="")
+            print(FULL_CHAR, end="", flush=True)
         else:
-            print(EMTPY_CHAR, end="")
+            print(EMTPY_CHAR, end="", flush=True)
         self.crt_pos += 1
         if self.crt_pos == 40:
             self.crt_pos = 0
             print()
+        sleep(0.004)
 
     def execute(self, line: str):
 
@@ -69,7 +70,11 @@ def main():
         lines = f.readlines()
 
     proc = Processor()
+    print(
+        "\n==========================================================================="
+    )
     print("PART 2: (read letters)")
+    print()
     for line in lines:
         proc.execute(line)
     print()

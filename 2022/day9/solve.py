@@ -13,7 +13,7 @@ class Knot(pydantic.BaseModel):
     y: int = 0
     follow: Optional["Knot"]
     next: "Knot" = None
-    name: str
+    name: str  # only for debugging
 
     def visit_current_pos(self):
         self.visited[self.x].add(self.y)
@@ -34,7 +34,6 @@ class Knot(pydantic.BaseModel):
         self.visited[self.x].add(self.y)
 
     def _move_to(self, x: int, y: int):
-        # print(self.name, "moving to", x, y)
         self.prev_x, self.prev_y = self.x, self.y
         self.x = x
         self.y = y
@@ -42,7 +41,8 @@ class Knot(pydantic.BaseModel):
 
     def follow_knot(self, other_knot: "Knot"):
         if (other_knot.x - self.x) ** 2 <= 1 and (other_knot.y - self.y) ** 2 <= 1:
-            # dont do anything
+            # dont do anything if other_knot is still in one of the 9 adjacent coords (or on same)
+            # aka dont do anything if sum of squared dists in x and y is <=2
             return
         # diagonal
         if self.x != other_knot.x and self.y != other_knot.y:
@@ -78,7 +78,8 @@ class Knot(pydantic.BaseModel):
             else:
                 self._move_to(self.x, self.y - 1)
             return
-        # self._move_to(other_knot.prev_x, other_knot.prev_y)
+
+        raise ValueError("how on earth did we get here")
 
     def do_follow(self):
         self.follow_knot(self.follow)
@@ -106,14 +107,12 @@ def main():
 
     for line in lines:
         direction, steps = line.split(" ")
+        # call move and do_follow 'steps' many times
         for _i in range(0, int(steps)):
             head.move(direction)
-            tail.follow_knot(head)
+            tail.do_follow()
 
-    sum_visited = 0
-    for x_coord in tail.visited:
-        sum_visited += len(tail.visited[x_coord])
-    print(sum_visited)
+    print("Part 1:", tail.number_visited())
 
     # PART 2 ===================================
     head = Knot(follow=None, name="head")
@@ -128,13 +127,15 @@ def main():
         direction, steps = line.split(" ")
         for i in range(0, int(steps)):
             head.move(direction)
+            # this propagates the call through all the following knots
             head.next.do_follow()
 
+    # dynamically get to tail
     current: Knot = head
     while current.next is not None:
         current = current.next
 
-    print(current.number_visited())
+    print("Part 2:", current.number_visited())
 
 
 if __name__ == "__main__":
