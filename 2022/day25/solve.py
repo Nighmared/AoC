@@ -19,5 +19,5 @@ def get_enc(secret: int, other_pubkey: int) -> int:
     return val
 
 
-print("[Part 1] secret1:", secret := find_secret(pubkey1))
-print("[Part 1] enc_key:", get_enc(secret, pubkey2))
+secret = find_secret(pubkey1)
+print("[Part 1]", get_enc(secret, pubkey2))

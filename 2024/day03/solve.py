@@ -1,30 +1,29 @@
+"""Solution for Advent of Code 2024 Day 3"""
+
 import re
+from sys import exit as sysexit
 
-with open("input.txt", "r") as f:
-    mem_cont = f.read()
-# mem_cont = "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))"
+with open("input.txt", "r", encoding="utf-8") as f:
+    MEM_CONT = f.read()
 
-pattern = r"(mul\([0-9]+,[0-9]+\))|(do\(\))|(don't\(\))"
+PATTERN = r"(mul\([0-9]+,[0-9]+\))|(do\(\))|(don't\(\))"
 
-valid_instrs = re.findall(pattern, mem_cont)
-
-
-res1 = 0
-res2 = 0
-enabled = True
-for instr in valid_instrs:
+matches = re.findall(PATTERN, MEM_CONT)
+res1: int = 0
+res2: int = 0
+enabled: bool = True
+for instr in matches:
     if instr[0] != "":
         a, b = [int(x) for x in instr[0][4:-1].split(",")]
         res1 += (prod := a * b)
         if enabled:
             res2 += prod
     elif instr[1] != "":
-        enabled = True
+        enabled: bool = True
     elif instr[2] != "":
-        enabled = False
+        enabled: bool = False
     else:
         print("AAAA")
+        sysexit(-1)
 print("[Part 1]", res1)
-
-
 print("[Part 2]", res2)
