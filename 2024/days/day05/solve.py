@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 from inputreader.reader import InputReader
-from solverbase.SolverBase import SolverBase
+from solverbase import SolverBase
 
 
 class State:

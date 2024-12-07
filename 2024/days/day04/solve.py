@@ -3,7 +3,7 @@
 from enum import Enum, auto
 
 from inputreader.reader import InputReader
-from solverbase.SolverBase import SolverBase
+from solverbase import SolverBase
 
 
 class Direction(Enum):

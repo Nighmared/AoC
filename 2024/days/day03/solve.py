@@ -4,7 +4,7 @@ import re
 from sys import exit as sysexit
 
 from inputreader.reader import InputReader
-from solverbase.SolverBase import SolverBase
+from solverbase import SolverBase
 
 PATTERN = r"(mul\([0-9]+,[0-9]+\))|(do\(\))|(don't\(\))"
 
@@ -35,9 +35,9 @@ class Solver(SolverBase):
                 if enabled:
                     res2 += prod
             elif instr[1] != "":
-                enabled: bool = True
+                enabled = True
             elif instr[2] != "":
-                enabled: bool = False
+                enabled = False
             else:
                 print("AAAA")
                 sysexit(-1)

@@ -1,5 +1,5 @@
 from inputreader.reader import InputReader
-from solverbase.SolverBase import SolverBase
+from solverbase import SolverBase
 
 DIRECTIONS = ((-1, 0), (0, 1), (1, 0), (0, -1))
 
@@ -18,11 +18,11 @@ class Solver(SolverBase):
     state: State
 
     def __init__(self, input_reader: InputReader) -> None:
+        print("Part 2 takes a while")
         self.state = State()
         self.state.grid = [list(line.strip()) for line in input_reader.lines]
         self.state.max_y = len(self.state.grid)
         self.state.max_x = len(self.state.grid[0])
-        print("Part 2 takes a while")
 
     def part1(self) -> int:
         coord_y = -1

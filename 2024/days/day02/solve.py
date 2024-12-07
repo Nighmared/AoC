@@ -1,5 +1,5 @@
 from inputreader.reader import InputReader
-from solverbase.SolverBase import SolverBase
+from solverbase import SolverBase
 
 
 def pair_is_safe(a: int, b: int, ascending: bool) -> bool:

@@ -13,4 +13,3 @@ class InputReader:
                     self.lines.pop()
         except FileNotFoundError:
             print("No such file", fpath)
-            return

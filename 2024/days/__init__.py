@@ -1,5 +1,3 @@
-from abc import ABC
-
 from days.day01 import Solver as Solver1
 from days.day02 import Solver as Solver2
 from days.day03 import Solver as Solver3
@@ -25,7 +23,7 @@ from days.day22 import Solver as Solver22
 from days.day23 import Solver as Solver23
 from days.day24 import Solver as Solver24
 from days.day25 import Solver as Solver25
-from solverbase.SolverBase import SolverBase
+from solverbase import SolverBase
 
 days: dict[int, type[SolverBase]] = {
     1: Solver1,

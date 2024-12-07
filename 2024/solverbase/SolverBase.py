@@ -15,3 +15,7 @@ class SolverBase:
     @abstractmethod
     def part2(self) -> int:
         """Returns solution for second Part of the daily puzzle"""
+
+    def prints(self, *arg, **kwargs):
+        print("[Solver]", end=" ")
+        print(*arg, **kwargs)
