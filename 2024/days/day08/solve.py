@@ -11,6 +11,7 @@ class Solver(SolverBase):
         antenna_coords: set[tuple[int, int]]
         max_x: int
         max_y: int
+        sol2: int = -1
 
     state: State
 
@@ -29,33 +30,10 @@ class Solver(SolverBase):
 
     def part1(self) -> int:
         antinodes: set[tuple[int, int]] = set()
+        antinodes2: set[tuple[int, int]] = set(self.state.antenna_coords)
         for v in self.state.antennas.values():
-            vlen = len(v)
-            for i in range(vlen - 1):
-                for j in range(i + 1, vlen):
-                    yi, xi = v[i]
-                    yj, xj = v[j]
-                    ydiff = yi - yj
-                    xdiff = xi - xj
-                    antinode_candidates = (
-                        (yi + ydiff, xi + xdiff),
-                        (yj - ydiff, xj - xdiff),
-                    )
-                    for yc, xc in antinode_candidates:
-                        if 0 <= yc < self.state.max_y and 0 <= xc < self.state.max_x:
-                            antinodes.add((yc, xc))
-        return len(antinodes)
-
-    def part2(self) -> int:
-        antinodes: set[tuple[int, int]] = set(self.state.antenna_coords)
-        for v in self.state.antennas.values():
-            vlen = len(v)
-            for i in range(vlen - 1):
-                # self.prints(k, "antenna at", v[i])
-                for j in range(i + 1, vlen):
-                    # self.prints("->", k, "antenna at", v[j])
-                    yi, xi = v[i]
-                    yj, xj = v[j]
+            for i, (yi, xi) in enumerate(v[:-1]):
+                for yj, xj in v[i + 1 :]:
                     ydiff = yi - yj
                     xdiff = xi - xj
                     keep_going = True
@@ -71,8 +49,15 @@ class Solver(SolverBase):
                                 0 <= yc < self.state.max_y
                                 and 0 <= xc < self.state.max_x
                             ):
-                                # self.prints(f"creates antinode at ({yc},{xc})")
                                 keep_going = True
-                                antinodes.add((yc, xc))
+                                antinodes2.add((yc, xc))
+                                if it == 1:
+                                    antinodes.add((yc, xc))
                         it += 1
+        self.state.sol2 = len(antinodes2)
         return len(antinodes)
+
+    def part2(self) -> int:
+        if self.state.sol2 < 0:
+            self.part1()
+        return self.state.sol2
