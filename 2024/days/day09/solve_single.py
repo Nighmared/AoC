@@ -1,31 +1,27 @@
 class Solver:
-    class State:
-        disk: list[int]
-        blocks: list[tuple[int, int, int]]
 
-    state: State
+    blocks: list[tuple[int, int, int]]
+    disk: list[int]
 
     def __init__(self, content) -> None:
-        self.state = self.State()
-        self.state.blocks = []
-        free_block = False
-        disk: list[int] = []
+        self.blocks = []
+        free_block: bool = False
+        self.disk = []
         block_id = 0
         for x in content:
             if free_block:
-                disk += [-1] * int(x)
+                self.disk += [-1] * int(x)
             else:
                 block_len = int(x)
-                self.state.blocks.append((len(disk), block_id, block_len))
-                disk += [block_id] * block_len
+                self.blocks.append((len(self.disk), block_id, block_len))
+                self.disk += [block_id] * block_len
                 block_id += 1
             free_block = not free_block
-        self.state.disk = disk
 
     def part1(self) -> int:
-        disk = self.state.disk[::]
-        disklen = len(disk)
-        first_free = 0
+        disk: list[int] = self.disk[::]
+        disklen: int = len(disk)
+        first_free: int = 0
         for j, block in enumerate(disk[::-1]):
             i = disklen - j - 1
 
@@ -43,7 +39,7 @@ class Solver:
                 disk[i] = -1
                 continue
             break
-        res = 0
+        res: int = 0
         for i, b in enumerate(disk):
             if b < 0:
                 break
@@ -51,10 +47,10 @@ class Solver:
         return res
 
     def part2(self) -> int:
-        disk = self.state.disk[::]
+        disk: list[int] = self.disk[::]
         free_list: list[list[int]] = []
-        free_start = 0
-        free_len = 0
+        free_start: int = 0
+        free_len: int = 0
         for i, b in enumerate(disk):
             if b < 0:
                 if free_len == 0:
@@ -65,7 +61,7 @@ class Solver:
                     free_list.append([free_start, free_len])
                     free_len = 0
 
-        for block_indx, block_id, block_len in self.state.blocks[::-1]:
+        for block_indx, block_id, block_len in self.blocks[::-1]:
             for freelistidx, (free_idx, free_len) in enumerate(free_list):
                 if block_indx <= free_idx:
                     break
@@ -97,8 +93,8 @@ class Solver:
 
 
 if __name__ == "__main__":
-    with open("input.txt", "r", encoding="utf-8") as f:
+    with open("input.txt", "r") as f:
         cont = f.read().strip()
     cl = Solver(cont)
-    print(cl.part1())
-    # print(cl.part2())
+    #print(cl.part1())
+    print(cl.part2())
