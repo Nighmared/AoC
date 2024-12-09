@@ -2,8 +2,9 @@ from datetime import datetime
 from sys import argv
 from sys import exit as sysexit
 
-import days
 import requests
+
+import days
 from inputreader import InputReader
 
 

@@ -1,21 +1,17 @@
-from inputreader.reader import InputReader
-from solverbase import SolverBase
-
-
-class Solver(SolverBase):
+class Solver:
     class State:
         disk: list[int]
         blocks: list[tuple[int, int, int]]
 
     state: State
 
-    def __init__(self, input_reader: InputReader) -> None:
+    def __init__(self, content) -> None:
         self.state = self.State()
         self.state.blocks = []
         free_block = False
         disk: list[int] = []
         block_id = 0
-        for x in input_reader.content:
+        for x in content:
             if free_block:
                 disk += [-1] * int(x)
             else:
@@ -56,7 +52,6 @@ class Solver(SolverBase):
 
     def part2(self) -> int:
         disk = self.state.disk[::]
-        disklen = len(disk)
         free_list: list[list[int]] = []
         free_start = 0
         free_len = 0
@@ -69,14 +64,6 @@ class Solver(SolverBase):
                 if free_len > 0:
                     free_list.append([free_start, free_len])
                     free_len = 0
-        # print(free_list)
-        # print(disk)
-        # for x in disk:
-        #     if x < 0:
-        #         print(".", end="")
-        #     else:
-        #         print(x, end="")
-        # print()
 
         for block_indx, block_id, block_len in self.state.blocks[::-1]:
             for freelistidx, (free_idx, free_len) in enumerate(free_list):
@@ -110,7 +97,8 @@ class Solver(SolverBase):
 
 
 if __name__ == "__main__":
-    ir = InputReader("input.txt")
-    cl = Solver(ir)
+    with open("input.txt", "r", encoding="utf-8") as f:
+        cont = f.read().strip()
+    cl = Solver(cont)
     print(cl.part1())
-    print(cl.part2())
+    # print(cl.part2())
