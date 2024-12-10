@@ -33,7 +33,8 @@ class Solver(SolverBase):
         antinodes2: set[tuple[int, int]] = set(self.state.antenna_coords)
         for v in self.state.antennas.values():
             for i, (yi, xi) in enumerate(v[:-1]):
-                for yj, xj in v[i + 1 :]:
+                ione = i + 1
+                for yj, xj in v[ione:]:
                     ydiff = yi - yj
                     xdiff = xi - xj
                     keep_going = True

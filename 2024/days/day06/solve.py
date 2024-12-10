@@ -68,7 +68,6 @@ class Solver(SolverBase):
             if (self.state.start_x, self.state.start_y) == (obst_x, obst_y):
                 continue
             i += 1
-            # print(str(i).zfill(4), f"/{len(self.state.visited_cells)}", end="\r")
             coord_y = self.state.start_y
             coord_x = self.state.start_x
             curr_direction_idx = 0

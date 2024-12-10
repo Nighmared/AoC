@@ -6,11 +6,6 @@ import (
 	"strings"
 )
 
-const (
-	sol   = "\033[31;47m"
-	reset = "\033[0;0m"
-)
-
 type block struct {
 	Index, Id, Len int
 }
@@ -51,7 +46,7 @@ func parseInput(inp []byte) ([]block, []int) {
 	return blocks, disk
 }
 
-func part1(disk []int) uint64 {
+func part1(disk []int) int {
 	disklen := len(disk)
 	first_free := 0
 	for i := disklen - 1; i >= 0; i-- {
@@ -79,13 +74,13 @@ func part1(disk []int) uint64 {
 		continue
 
 	}
-	res := uint64(0)
+	res := 0
 	for i, b := range disk {
 		if b < 0 {
 			break
 		}
 		// fmt.Println("{}{}", i, b)
-		res += uint64(i * b)
+		res += i * b
 	}
 
 	return res
@@ -109,7 +104,6 @@ func part2(disk []int, blocks []block) int {
 			}
 		}
 	}
-	finish := false
 	for j := blockslen - 1; j >= 0; j-- {
 		curr_block := blocks[j]
 		for k := 0; k < len(free_list); k++ {
@@ -134,9 +128,7 @@ func part2(disk []int, blocks []block) int {
 				break
 			}
 		}
-		if finish {
-			break
-		}
+
 	}
 
 	res := 0
@@ -152,17 +144,14 @@ func part2(disk []int, blocks []block) int {
 func main() {
 	cont, err := os.ReadFile("input.txt")
 	check(err)
-	_, disk := parseInput(cont)
+	blocks, disk := parseInput(cont)
 	disk1 := make([]int, len(disk))
 
 	fmt.Println("Part 1:")
 	copy(disk1, disk)
 	fmt.Println(part1(disk1))
 
-	// Part 2
-	// fmt.Println("===========================================================================")
-	// copy(disk1, disk)
-	// fmt.Println("Part 2:")
-	// fmt.Println(part2(disk1, blocks))
+	fmt.Println("Part 2:")
+	fmt.Println(part2(disk, blocks))
 
 }

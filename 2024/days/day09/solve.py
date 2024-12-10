@@ -56,7 +56,6 @@ class Solver(SolverBase):
 
     def part2(self) -> int:
         disk = self.state.disk[::]
-        disklen = len(disk)
         free_list: list[list[int]] = []
         free_start = 0
         free_len = 0
@@ -69,14 +68,6 @@ class Solver(SolverBase):
                 if free_len > 0:
                     free_list.append([free_start, free_len])
                     free_len = 0
-        # print(free_list)
-        # print(disk)
-        # for x in disk:
-        #     if x < 0:
-        #         print(".", end="")
-        #     else:
-        #         print(x, end="")
-        # print()
 
         for block_indx, block_id, block_len in self.state.blocks[::-1]:
             for freelistidx, (free_idx, free_len) in enumerate(free_list):

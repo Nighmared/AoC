@@ -1,8 +1,7 @@
-from inputreader.reader import InputReader
-from solverbase import SolverBase
+from sys import argv
 
 
-class Solver(SolverBase):
+class Solver:
     results_grid: list[list[set[tuple[int, int]]]]
     rating_grid: list[list[int]]
     grid: list[list[int]]
@@ -11,13 +10,13 @@ class Solver(SolverBase):
     limx: int
     sol2: int
 
-    def __init__(self, input_reader: InputReader) -> None:
+    def __init__(self, inputl: list[str]) -> None:
         self.starts = []
         self.grid = []
         self.results_grid = []
         self.rating_grid = []
         self.sol2 = -1
-        for y, line in enumerate(input_reader.lines):
+        for y, line in enumerate(inputl):
             self.grid.append([])
             self.results_grid.append([])
             self.rating_grid.append([])
@@ -79,3 +78,14 @@ class Solver(SolverBase):
         if self.sol2 < 0:
             self.part1()
         return self.sol2
+
+
+if __name__ == "__main__":
+    with open("input.txt", "r") as file:
+        ls = file.read().strip().split("\n")
+    sl = Solver(ls)
+
+    if "1" in argv[1]:
+        print(sl.part1())
+    if "2" in argv[1]:
+        print(sl.part2())
