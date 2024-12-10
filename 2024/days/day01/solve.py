@@ -10,12 +10,14 @@ class Solver(SolverBase):
         lines: list[str]
         left: list[int]
         cnt: dict[int, int]
+        ran_p1: bool
 
     state: State
 
     def __init__(self, input_reader: InputReader) -> None:
         self.state = self.State()
         self.state.lines = input_reader.lines
+        self.state.ran_p1 = False
 
     def part1(self) -> int:
         left = []
@@ -37,10 +39,12 @@ class Solver(SolverBase):
             res += abs(left_s[i] - right_s[i])
         self.state.left = left
         self.state.cnt = cnt
+        self.state.ran_p1 = True
         return res
 
     def part2(self) -> int:
-
+        if not self.state.ran_p1:
+            self.part1()
         res2 = 0
         for x in self.state.left:
             res2 += x * self.state.cnt[x]

@@ -1,6 +1,7 @@
 from datetime import datetime
 from sys import argv
 from sys import exit as sysexit
+from time import time_ns
 
 import requests
 
@@ -66,16 +67,57 @@ def main() -> None:
                 print(f"[+] Downloaded input for day {day} and stored at {path}")
                 in_reader = InputReader(path)
 
-    solver = solver_cls(in_reader)
-    res1 = solver.part1()
-    if sample:
-        print("[SAMPLE INPUT]", end="")
-    print("[Part 1]", res1)
-    res2 = solver.part2()
-    if sample:
-        print("[SAMPLE INPUT]", end="")
-    print("[Part 2]", res2)
+    if "bm" in argv:
+        NUM_RUNS = 500
+        start_bm = time_ns()
+        for i in range(NUM_RUNS):
+            del in_reader
+            in_reader = InputReader(path)
+            cls = solver_cls(in_reader)
+            _ = cls.part1()
+            del cls
+        end_bm = time_ns()
+        print(
+            f"[Benchmark], average Time P1 over {NUM_RUNS} runs: {(end_bm-start_bm)/(NUM_RUNS*1_000_000)}ms"
+        )
+        start_bm = time_ns()
+        for i in range(NUM_RUNS):
+            del in_reader
+            in_reader = InputReader(path)
+            cls = solver_cls(in_reader)
+            _ = cls.part2()
+            del cls
+        end_bm = time_ns()
+        print(
+            f"[Benchmark], average Time P2 over {NUM_RUNS} runs: {(end_bm-start_bm)/(NUM_RUNS*1_000_000)}ms"
+        )
+
+    else:
+        start_0 = time_ns()
+        solver = solver_cls(in_reader)
+        end_0 = time_ns()
+        parsing = (end_0 - start_0) / 1_000_000
+        start_1 = time_ns()
+        res1 = solver.part1()
+        end_1 = time_ns()
+        p1time = (end_1 - start_1) / 1_000_000
+        if sample:
+            print("[SAMPLE INPUT]", end="")
+        print(f"Initializing solver took\t{parsing}ms")
+        if sample:
+            print("[SAMPLE INPUT]", end="")
+        print("[Part 1]", str(res1).ljust(20), f"\t{p1time}ms\t [{p1time+parsing}ms]")
+        start_2 = time_ns()
+        res2 = solver.part2()
+        end_2 = time_ns()
+        p2time = (end_2 - start_2) / 1_000_000
+        if sample:
+            print("[SAMPLE INPUT]", end="")
+        print("[Part 2]", str(res2).ljust(20), f"\t{p2time}ms\t[{p2time+parsing}ms]")
 
 
 if __name__ == "__main__":
+    start = time_ns()
     main()
+    end = time_ns()
+    print(f"Everything combined: {(end-start)/1_000_000}ms")
