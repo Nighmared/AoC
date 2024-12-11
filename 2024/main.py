@@ -3,9 +3,8 @@ from sys import argv
 from sys import exit as sysexit
 from time import time_ns
 
-import requests
-
 import days
+import requests
 from inputreader import InputReader
 
 
@@ -97,13 +96,13 @@ def main() -> None:
         solver = solver_cls(in_reader)
         end_0 = time_ns()
         parsing = (end_0 - start_0) / 1_000_000
+        print(f"Initializing solver took\t{parsing}ms")
         start_1 = time_ns()
         res1 = solver.part1()
         end_1 = time_ns()
         p1time = (end_1 - start_1) / 1_000_000
         if sample:
             print("[SAMPLE INPUT]", end="")
-        print(f"Initializing solver took\t{parsing}ms")
         if sample:
             print("[SAMPLE INPUT]", end="")
         print("[Part 1]", str(res1).ljust(20), f"\t{p1time}ms\t [{p1time+parsing}ms]")
